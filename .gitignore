@@ -1,4 +1,4 @@
-# Virtual environments
+# Virtual environments (any folder named venv or new_venv)
 **/venv/
 **/new_venv/
 **/.venv/
