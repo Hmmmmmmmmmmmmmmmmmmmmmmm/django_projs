@@ -6,7 +6,7 @@ from . import views
 #     path("january", views.index)
 # ]
 urlpatterns = [
-    path('', views.main_func, name='main'),
+    path('', views.index, name='index'),
     # path('january/', views.january, name='january'),
     # path('february/', views.february, name='february'),
     # path('march/', views.march, name='march'),

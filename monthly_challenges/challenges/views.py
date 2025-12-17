@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 # Create your views here.
 
@@ -8,7 +9,14 @@ def main_func(request):
 
 
 def index(request):
-    return HttpResponse("This works!!!!!")
+    list_items = ""
+    months = list(challenges.keys())
+    for month in months:
+        capitalized_month =  month.capitalize()
+        month_path = reverse("month",args = [month])
+        list_items +=f"<li><a href = \"{month_path}\">{capitalized_month}</li>"
+    response_data = f"<ul>{list_items}</ul>"
+    return HttpResponse(response_data)
     # instantiating an object of HttpResponse class
     #we can send a html but we are sending a simple string
     #now to tell django when to call this index function
@@ -70,13 +78,14 @@ challenges = {
         'november': 'Cultivate gratitude and mindfulness.',
         'december': 'Reflect on achievements and plan for the next year.',
     }
-    
+
 
 def month_view(request, month):
     month = month.lower();
     if month not in challenges:
         return HttpResponse("Which month is this??", status =404 )
-    return HttpResponse(f"{month.capitalize()} Challenge: {challenges[month]}")
+    response_data=f"<h1>{month.capitalize()} Challenge: {challenges[month]}</h1>"
+    return HttpResponse(response_data)
 
 
 # we basically made it a dynamic single url
@@ -86,4 +95,5 @@ def monthly_view_number_based(request,month):
     if month>len(months) or month<1:
         return HttpResponse(f"Since when is there a {month}'th month eh?",status=404)
     redirected_month=months[month-1]
-    return HttpResponseRedirect(''+redirected_month)
+    redirected_path = reverse("number_based_month",args=[redirected_month])
+    return HttpResponseRedirect(redirected_path)
