@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
 
@@ -55,8 +55,8 @@ def index(request):
 # a better alternative:
 # from django.http import HttpResponse
 
-def month_view(request, month):
-    challenges = {
+#data:
+challenges = {
         'january': 'Set clear goals and build a daily routine.',
         'february': 'Focus on consistency and healthy habits.',
         'march': 'Learn a new skill or improve an existing one.',
@@ -70,8 +70,20 @@ def month_view(request, month):
         'november': 'Cultivate gratitude and mindfulness.',
         'december': 'Reflect on achievements and plan for the next year.',
     }
+    
 
-    challenge = challenges.get(month.lower(), "Invalid month")
-    return HttpResponse(f"{month.capitalize()} Challenge: {challenge}")
+def month_view(request, month):
+    month = month.lower();
+    if month not in challenges:
+        return HttpResponse("Which month is this??", status =404 )
+    return HttpResponse(f"{month.capitalize()} Challenge: {challenges[month]}")
+
 
 # we basically made it a dynamic single url
+
+def monthly_view_number_based(request,month):
+    months = list(challenges.keys())
+    if month>len(months) or month<1:
+        return HttpResponse(f"Since when is there a {month}'th month eh?",status=404)
+    redirected_month=months[month-1]
+    return HttpResponseRedirect(''+redirected_month)
