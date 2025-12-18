@@ -1,8 +1,25 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.template.loader import render_to_string
 
 # Create your views here.
+
+#data:
+challenges = {
+        'january': 'Set clear goals and build a daily routine.',
+        'february': 'Focus on consistency and healthy habits.',
+        'march': 'Learn a new skill or improve an existing one.',
+        'april': 'Improve time management and productivity.',
+        'may': 'Prioritize physical fitness and mental well-being.',
+        'june': 'Strengthen professional or academic skills.',
+        'july': 'Enhance creativity and explore new ideas.',
+        'august': 'Improve communication and collaboration.',
+        'september': 'Focus on learning and personal growth.',
+        'october': 'Practice discipline and long-term planning.',
+        'november': 'Cultivate gratitude and mindfulness.',
+        'december': 'Reflect on achievements and plan for the next year.'
+    }
 
 def main_func(request):
     return HttpResponse("Main")
@@ -11,12 +28,16 @@ def main_func(request):
 def index(request):
     list_items = ""
     months = list(challenges.keys())
-    for month in months:
-        capitalized_month =  month.capitalize()
-        month_path = reverse("month",args = [month])
-        list_items +=f"<li><a href = \"{month_path}\">{capitalized_month}</li>"
-    response_data = f"<ul>{list_items}</ul>"
-    return HttpResponse(response_data)
+    # for month in months:
+    #     capitalized_month =  month.capitalize()
+    #     month_path = reverse("month",args = [month])
+    #     list_items +=f"<li><a href = \"{month_path}\">{capitalized_month}</li>"
+    # response_data = f"<ul>{list_items}</ul>"
+    # return HttpResponse(response_data)
+    return render(request, "challenges/index.html",{
+        "months": months
+        # "text": ,
+    })
     # instantiating an object of HttpResponse class
     #we can send a html but we are sending a simple string
     #now to tell django when to call this index function
@@ -63,37 +84,36 @@ def index(request):
 # a better alternative:
 # from django.http import HttpResponse
 
-#data:
-challenges = {
-        'january': 'Set clear goals and build a daily routine.',
-        'february': 'Focus on consistency and healthy habits.',
-        'march': 'Learn a new skill or improve an existing one.',
-        'april': 'Improve time management and productivity.',
-        'may': 'Prioritize physical fitness and mental well-being.',
-        'june': 'Strengthen professional or academic skills.',
-        'july': 'Enhance creativity and explore new ideas.',
-        'august': 'Improve communication and collaboration.',
-        'september': 'Focus on learning and personal growth.',
-        'october': 'Practice discipline and long-term planning.',
-        'november': 'Cultivate gratitude and mindfulness.',
-        'december': 'Reflect on achievements and plan for the next year.',
-    }
+
 
 
 def month_view(request, month):
-    month = month.lower();
+    month = month.lower()
     if month not in challenges:
         return HttpResponse("Which month is this??", status =404 )
-    response_data=f"<h1>{month.capitalize()} Challenge: {challenges[month]}</h1>"
-    return HttpResponse(response_data)
+    # response_data=render_to_string(")
+    # f"<h1>{month.capitalize()} Challenge: {challenges[month]}</h1>"
+    # return HttpResponse(response_data)
+    return render(request,
+        "challenges/challenge.html",{
+            "month_name":month,
+            "text": f"{month.capitalize()} Challenge: {challenges[month]}",
+            "huh":challenges[month],
+    })
 
 
 # we basically made it a dynamic single url
 
 def monthly_view_number_based(request,month):
-    months = list(challenges.keys())
+    months = list(challenges.keys())\
+
     if month>len(months) or month<1:
-        return HttpResponse(f"Since when is there a {month}'th month eh?",status=404)
+        return HttpResponse(
+            f"Since when is there a {month}'th month eh?",
+            status=404
+        )
+
     redirected_month=months[month-1]
-    redirected_path = reverse("number_based_month",args=[redirected_month])
+    redirected_path = reverse("month",args=[redirected_month])
+
     return HttpResponseRedirect(redirected_path)
